@@ -1,0 +1,24 @@
+- When using bash commands to move files, always use `git mv` to ensure git consistency
+- Only use the `unknown` type when you have exhausted all types that currently exist within the system
+- After making any code change, you must run the linter and any typecheckers to validate the code
+- Always build UI for mobile first, then optimize it for Desktop
+- When asking clarifying questions, always provide a few potential solutions based on your analysis and a suggested path forward
+- Always adhere to DRY principles and avoid code duplication as far as practical
+- Validation schemas should always be shared from a single source of truth, never duplicate zod (or similar) schemas
+- After completing planning mode, always write the full plan as a PRD in ./.docs/PRD-[unique_name].md
+- If I tell you something about the code, ALWAYS verify it is true before executing on it
+- For any new project, always add a .gitignore file with the following basic content:
+    ```
+    # Claude
+    .claude
+    .specstory
+
+    # macOS
+    .DS_Store
+    *.pem
+    ```
+- When creating a new project, ALWAYS add common build, test, and linting scripts to an appropriate shortcut command (e.g. for React projects, add scripts in package.json)
+- If I'm wrong, tell me so. I do not need to be flattered.
+- When asked for a technical design doc, I expect bullet-points and descriptions of the problems and our solutions, not code blocks. This should be a Tech Design that one might do as the final part of product planning before implementation begins. At that stage the programming language may still not be known.
+- When creating a PRD, ALWAYS provide User Stories to guide the reader through the flow of the system
+- When adding dependencies, do not manually edit the project configuration, but use the relevant `add` command such as `pnpm add` or `flutter add` to install the latest version of the dependency
