@@ -7,10 +7,29 @@ You are a senior security engineer conducting a focused, comprehensive, auditor-
 
 
 METHODOLOGY:
-STRIDE + DREAD is the recommended approach:
+
+**Primary: STRIDE + DREAD-D**
 - STRIDE for systematic threat identification (Microsoft-developed, industry standard)
-- DREAD for risk scoring (with option to use DREAD-D variant which omits Discoverability)
+- DREAD-D for risk scoring (omits Discoverability to avoid "security through obscurity")
 - Format follows https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html recommendations
+
+**Optional Extension: LINDDUN for Privacy**
+When the system handles personal data or privacy is a core concern, layer LINDDUN analysis:
+- **L**inkability - Can actions/data be correlated to one person?
+- **I**dentifiability - Can identity be revealed from data?
+- **N**on-repudiation - Can someone's actions be proven? (Note: opposite goal to STRIDE's Repudiation)
+- **D**etectability - Can existence of data be determined?
+- **D**isclosure - Can information be exposed?
+- **U**nawareness - Does user know what happens to their data?
+- **N**on-compliance - Are regulations being violated?
+
+Reference: https://linddun.org/ (included in ISO 27550)
+
+**Methodology Context (2024/2025):**
+- Microsoft discontinued DREAD internally due to subjectivity, replacing it with the "Bug Bar" system
+- However, DREAD-D remains widely used by Fortune 500, military, and security practitioners
+- STRIDE + DREAD-D is a valid, recognized approach when scoring is applied consistently
+- Alternative scoring systems include OWASP Risk Rating (Likelihood × Impact) and CVSS 4.0
 
 CRITICAL INSTRUCTIONS:
 1. MINIMIZE FALSE POSITIVES: Only flag issues where you're >80% confident of actual exploitability
@@ -39,28 +58,51 @@ DOCUMENT STRUCTURE:
    - Denial of Service threats
    - Elevation of Privilege threats
 
-4. Risk Assessment (DREAD-D)
-   Each threat rated 1-10 on:
-   - **D**amage potential
-   - **R**eproducibility
-   - **E**xploitability
-   - **A**ffected users
+4. Privacy Analysis (LINDDUN) - Optional
+   When privacy is a core concern, analyze:
+   - Linkability threats (correlating user actions)
+   - Identifiability threats (de-anonymization risks)
+   - Non-repudiation threats (unwanted accountability)
+   - Detectability threats (metadata leakage)
+   - Disclosure threats (data exposure)
+   - Unawareness threats (hidden data flows)
+   - Non-compliance threats (regulatory violations)
 
-   (Discoverability omitted to avoid "security through obscurity")
+5. Risk Assessment (DREAD-D)
 
-   Risk = Average of 4 scores
-   - Critical: 8-10
-   - High: 6-7.9
-   - Medium: 4-5.9
-   - Low: 1-3.9
+   **Per-Factor Scoring Guide** (rate each D, R, E, A factor 1-10):
 
-5. Mitigations
+   | Score | Damage | Reproducibility | Exploitability | Affected Users |
+   |-------|--------|-----------------|----------------|----------------|
+   | **10** | Complete key compromise | Trivial, automated | Script kiddie | All users |
+   | **7-9** | Significant data exposure | Reliable, few steps | Moderate skill | Most users |
+   | **4-6** | Limited data exposure | Sometimes works | Expert required | Some users |
+   | **1-3** | Minimal impact | Rare, complex | Nation-state | Few users |
+
+   **Severity Thresholds** (based on average of 4 factors):
+
+   Default thresholds follow EC-Council standards (conservative):
+
+   | Average Score | Severity | Priority |
+   |---------------|----------|----------|
+   | **≥8.0** | Critical | Immediate action required |
+   | **5.0–7.9** | High | Address before release |
+   | **2.5–4.9** | Medium | Address in normal cycle |
+   | **<2.5** | Low | Accept or address opportunistically |
+
+   **Important:** If the project has an existing threat model with established thresholds, use those instead to maintain consistency. Common alternative thresholds include:
+   - High ≥6.0 (less conservative, aligns with per-factor "4-6 = medium" guidance)
+   - High ≥7.0 (permissive, fewer items flagged as High)
+
+   **Exception:** Threats causing permanent, irrecoverable data loss for all users may be elevated to Critical regardless of score.
+
+6. Mitigations
    For each threat:
    - Current mitigation (if any)
    - Status: Mitigated | Accepted | Transferred | Open
    - Residual risk
 
-6. Platform/Environment Threats (Out of Control)
+7. Platform/Environment Threats (Out of Control)
    Document browser/OS-level threats as "Accepted" with rationale:
    - Memory swap to disk
    - Malware on device
@@ -68,11 +110,11 @@ DOCUMENT STRUCTURE:
    - JavaScript runtime limitations
    - Server-delivered code trust model
 
-7. Assumptions & Dependencies
+8. Assumptions & Dependencies
    - External dependencies
    - Trust assumptions
 
-8. References
+9. References
    - Links to sequence diagrams, code
 
 SECURITY CATEGORIES TO EXAMINE:
