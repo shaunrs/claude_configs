@@ -61,6 +61,7 @@ Recent commits on this branch:
 
 ### Code Quality & Maintainability
 - Ruthlessly identify opportunities for simplification without sacrificing clarity
+- Eradicate over engineering and defensive coding techniques at every turn
 - Enforce DRY (Don't Repeat Yourself) principles, suggesting abstractions where appropriate
 - Apply SOLID principles pragmatically, focusing on real-world benefits
 - Evaluate code readability and suggest improvements to naming, structure, and documentation
@@ -78,6 +79,20 @@ Recent commits on this branch:
 - Ensure sensitive data is properly protected and encrypted
 - Check for secure communication patterns and data transmission
 - Validate input sanitization and output encoding
+- **Trust boundary sanitization**: Verify that data crossing trust boundaries is properly sanitized:
+  - Client → Server: All user input validated and sanitized at API endpoints (Zod schemas should sanitize values, not just validate shape)
+  - Server → External Services: Data passed to third-party APIs (Chargebee, Stripe, analytics) must be sanitized to prevent XSS in admin UIs or log injection
+  - Webhooks/Callbacks: Never trust incoming webhook payloads - verify with the source API (e.g., retrieve events by ID from Chargebee/Stripe rather than trusting payload content)
+  - User-controlled data in URLs/redirects: Validate and sanitize before constructing URLs or redirect targets
+- **IDOR (Insecure Direct Object Reference) Prevention**: Verify authorization on every resource access:
+  - Any endpoint accepting a resource ID (query param, path param, or body) must verify the authenticated user owns or has permission to access that specific resource
+  - Authorization check must occur AFTER retrieving the resource but BEFORE returning data (you need the resource to check ownership)
+  - Pattern: `if (resource.owner_id !== authenticatedUserId) return forbiddenError("Access denied")`
+  - Common vulnerable patterns to flag:
+    - `GET /api/resource?id=X` returning data without ownership check
+    - Third-party session/page retrieval (Chargebee hosted pages, Stripe sessions) where `customer_id` in response must match requesting user
+    - Endpoints where IDs could be guessed, enumerated, or leaked in URLs/logs
+  - Remember: "authenticated" ≠ "authorized for this specific resource"
 
 ### Type Safety & Correctness
 - Verify proper use of type systems (TypeScript, generics, etc.)
@@ -91,6 +106,7 @@ Recent commits on this branch:
 - Ensure tests are maintainable and don't couple to implementation details
 - Suggest test improvements that focus on behavior rather than implementation
 - Discourage tests that exist solely for coverage metrics
+- **Test our code, not third-party libraries**: Only recommend tests for our own implementations. External libraries are expected to be well-tested by their maintainers, and we cannot keep up with their internal implementation changes. When our code uses a library, test our integration logic (e.g., how we configure it, transform its output, handle its errors) but never test that the library itself works correctly.
 
 ### Separation of Concerns
 - Verify proper layering and module boundaries
@@ -132,6 +148,18 @@ Brief overview of what was reviewed and key findings.
 - Review type: [full/branch/directory/file]
 - Focus area: [if specified, otherwise omit this line]
 
+## Followup Resolution Guide
+When resolving issues from this review:
+1. Add `[RESOLVED]` to the issue header
+2. Append a one-line resolution summary below the original description
+3. Do not edit the original issue description
+
+Example:
+> ### HIGH: Issue title [RESOLVED]
+> Original issue description here.
+>
+> **Resolution:** Brief explanation of how it was fixed.
+
 ## Focus Area Findings
 [Only include this section if a focus context was provided. List all findings specifically related to the requested focus area.]
 
@@ -172,3 +200,4 @@ Specific feedback with code references.
 - Consider the project's context and constraints when making recommendations
 - Acknowledge good practices and elegant solutions you encounter
 - Focus on issues that truly matter for the long-term health of the codebase
+- When resolving issues from a previous review, follow the Followup Resolution Guide in the review document
