@@ -6,6 +6,7 @@
 
 ## Documentation
 - After completing planning mode, always write the full plan as a PRD with filename formatted ./.docs/PRD-[date]-[unique_name].md - replacing [date] with the output of `date -I`
+- After implementing a PRD, rename the document using `mv .docs/PRD-[date]-{,DONE-}[unique_name].md - keeping the existing date and unique_name of the document
 - When creating a PRD, ALWAYS provide User Stories and Mermaid diagrams to guide the reader through the flow of the system
 - When asked for a technical design doc, I expect bullet-points and descriptions of the problems and our solutions, not code blocks. This should be a Tech Design that one might do as the final part of product planning before implementation begins. At that stage the programming language may still not be known.
 
@@ -15,6 +16,7 @@
   - Stack section: One-line descriptions for each key library
   - Commands: Just the essentials (dev, build, lint, type-check, validate)
   - Code Quality: Bullet points covering linting, formatting, pre-commit, and commits
+  - License: No need to include a License section, unless explicity requested by the user. If so you must clarify the license to use.
 
 ## Process
 
@@ -57,6 +59,8 @@
   - Test mocks for code paths that don't exist
   - Commented-out code "for later"
   - Generic interfaces when only one implementation exists
+- **Prefer explicit dependencies over hidden ones** - Pass dependencies as parameters rather than reaching for globals or hardcoding instantiation. This enables easier testing and loose coupling. Use DI frameworks when the codebase/framework convention calls for it (Angular, NestJS, Spring), but don't introduce DI containers just for their own sake. In functional or simpler codebases, plain parameter passing achieves the same benefits without the overhead.
+- **Functions by default, classes for shared mutable state** - Use standalone functions unless multiple functions share mutable module-level state with a lifecycle (e.g., database connections, session handles). In that case, encapsulate in a class to make the coupling explicit. Don't use classes just for grouping related functions.
 - Always build UI for mobile first, then optimize it for Desktop
 
 - **No convenience re-exports** - Import directly from the source module, not through intermediate files. Re-exports are only acceptable in:
