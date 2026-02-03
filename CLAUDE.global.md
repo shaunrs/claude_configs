@@ -42,6 +42,31 @@
 ### Summarizing Changes
 - After completing a phase of work, please list all of the filenames that had changes applied
 
+### Learning from Mistakes
+- When a mistake is made and a resolution is determined, add a rule to CLAUDE.md to prevent the same mistake from happening again
+- Choose the appropriate file based on scope:
+  - `~/.claude/CLAUDE.md` - Language-agnostic rules that apply to all projects (e.g., explicit dependencies, functions by default, no convenience re-exports)
+  - `./CLAUDE.md` - Project or language-specific rules (e.g., database connection patterns, auth context structure, framework conventions)
+
+### Elegant Solution Refinement
+**MANDATORY:** At the end of any session involving:
+- Large coding work (500+ lines of code written/modified), OR
+- Long debugging/fixing session (5+ minutes of investigation)
+
+You MUST ask the user:
+
+> "Now that we have a working solution with full understanding of the problem, would you like me to refactor this into a more elegant implementation?"
+
+**What "elegant" means:**
+1. **Single source of truth** - Consolidate duplicated data/logic into one authoritative location
+2. **Explicit dependencies** - Make implicit relationships visible through imports/parameters
+3. **Minimal surface area** - Remove intermediate layers that don't add value
+4. **Self-documenting structure** - File/function names that explain the architecture
+
+Additionally, review against all principles in the **Coding Style** section below (DRY, YAGNI, functions by default, no magic numbers, etc.).
+
+**Why this matters:** Working solutions developed during debugging often accumulate accidental complexity. Refining while context is fresh produces cleaner, more maintainable code.
+
 ## Coding Style
 
 - When creating new features, or updating existing ones, always check to ensure @CLAUDE.md remains accurate
@@ -62,6 +87,7 @@
 - **Prefer explicit dependencies over hidden ones** - Pass dependencies as parameters rather than reaching for globals or hardcoding instantiation. This enables easier testing and loose coupling. Use DI frameworks when the codebase/framework convention calls for it (Angular, NestJS, Spring), but don't introduce DI containers just for their own sake. In functional or simpler codebases, plain parameter passing achieves the same benefits without the overhead.
 - **Functions by default, classes for shared mutable state** - Use standalone functions unless multiple functions share mutable module-level state with a lifecycle (e.g., database connections, session handles). In that case, encapsulate in a class to make the coupling explicit. Don't use classes just for grouping related functions.
 - Always build UI for mobile first, then optimize it for Desktop
+- **Use progressive disclosure** - Start with the simplest possible interface showing only essential options. Reveal advanced features, settings, or information only when the user needs them. This reduces cognitive load and makes applications approachable without sacrificing power-user functionality.
 
 - **No convenience re-exports** - Import directly from the source module, not through intermediate files. Re-exports are only acceptable in:
   - Barrel files (`index.ts`) that define a module's public API
