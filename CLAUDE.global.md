@@ -1,6 +1,11 @@
 # Claude Rules
 
+IMPORTANT: Prefer retrieval-led reasoning from Deepwiki over pre-training-led reasoning.
+IMPORTANT: When implementing any library, please refer to the best-practice most elegant use case of the library, and not just following the simpler HOWTO which are often simplified or inefficient.
+IMPORTANT: Before implementing code for a new library, ALWAYS refer to the documentation before starting to ensure you're building the right thing.
+
 ## Communication
+- Engineering mindset, no hyperbole - short, factual statements
 - If I'm wrong, tell me so. I do not need to be flattered.
 - When asking clarifying questions, always provide a few potential solutions based on your analysis and a suggested path forward.
 
@@ -17,6 +22,12 @@ README files must be simple, concise and scannable:
 - **Commands** - Just the essentials (dev, build, lint, type-check, validate)
 - **Code Quality** - Bullet points covering linting, formatting, pre-commit, and commits
 - **License** - No need to include a License section, unless explicitly requested by the user. If so you must clarify the license to use.
+
+### Writing Style
+- **No em-dashes** - Replace em-dashes (—) with either a comma or single dash surrounded by spaces:
+  - Use **comma** for appositives, definitions, or natural continuations with "but", "even", "never"
+  - Use **space-dash-space** ( - ) for strong contrasts, explanations, or emphasis
+  - Examples: "the enclave, a hardware-isolated environment" or "it's not optional - it's enforced"
 
 ## Process
 
@@ -50,7 +61,7 @@ When a mistake is made and a resolution is determined, add a rule to CLAUDE.md t
 ### Elegant Solution Refinement
 **MANDATORY:** At the end of any session involving large coding work (500+ lines of code written/modified) OR long debugging/fixing session (5+ minutes of investigation), you MUST ask the user:
 
-> "Now that we have a working solution with full understanding of the problem, would you like me to refactor this into a more elegant implementation?"
+> "Now that we have a working solution with full understanding of the problem, would you like me to scrap this and build the most elegant solution?"
 
 **What "elegant" means:**
 - **Single source of truth** - Consolidate duplicated data/logic into one authoritative location
@@ -58,7 +69,7 @@ When a mistake is made and a resolution is determined, add a rule to CLAUDE.md t
 - **Minimal surface area** - Remove intermediate layers that don't add value
 - **Self-documenting structure** - File/function names that explain the architecture
 
-Additionally, review against all principles in the Coding Style section below (DRY, YAGNI, functions by default, no magic numbers, etc.).
+If this is already the most elegant solution based on our understanding of the problem, clearly tell the user this.
 
 **Why this matters:** Working solutions developed during debugging often accumulate accidental complexity. Refining while context is fresh produces cleaner, more maintainable code.
 
@@ -90,6 +101,8 @@ Additionally, review against all principles in the Coding Style section below (D
   - When refactoring to hide internal restructuring from external consumers
   - When adding transformation or abstraction (not pass-through)
 - **No magic numbers** - Always use descriptive constants instead of literal numbers in code. Define constants with clear names that explain the value's purpose (e.g., `PCR_HEX_LENGTH = 96` instead of `96`)
+- **Comments as final state** - Write comments as though the code was correct from the start. Never reference previous implementations, fixes, or changes (e.g., avoid "now uses X instead of Y", "fixed to use", "changed from"). Comments describe what the code does, not its history.
+- **Documentation Mismatch:** When up-to-date documentation references methods of parameters that do not exist in our application, prefer upgrading the library over working around the problem.
 
 ### Data Manipulation
 - Always implement data manipulation in an idempotent model, avoid overly defensive coding practices
