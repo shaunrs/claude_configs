@@ -39,7 +39,17 @@
 ## Code Quality
 
 - **No magic numbers** - Always use descriptive constants instead of literal numbers. Define constants with clear names that explain the value's purpose (e.g., `PCR_HEX_LENGTH = 96` instead of `96`).
-- **Comments as final state** - Write comments as though the code was correct from the start. Never reference previous implementations, fixes, or changes (avoid "now uses X instead of Y", "fixed to use", "changed from"). Comments describe what the code does, not its history.
+- **Comments describe current state only** - Write comments as though the code was correct from the start. Comments explain what the code does now, not what it used to do or why it changed.
+  - Never reference previous implementations, fixes, migrations, or removals
+  - Never include temporal language that implies a before/after state
+  - **Prohibited patterns:**
+    - "Fixed to use X" / "Now uses X instead of Y"
+    - "Changed from X to Y" / "Updated to use X"
+    - "Test removed - tested elsewhere" / "Moved to X"
+    - "Previously this did X" / "Used to be Y"
+    - "TODO: remove after migration" / "Temporary until X"
+    - "// removed" / "// deprecated" (when the code itself is gone)
+  - **Exception:** Git commit messages and PR descriptions should reference history - that's their purpose. Comments in code should not.
 - **Data manipulation should be idempotent** - Avoid overly defensive coding practices.
 
 ## Error Handling
