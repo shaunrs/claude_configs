@@ -1,4 +1,8 @@
 ---
+name: review-quality
+description: Use this agent when you need an aggressive simplification review to identify code that can be deleted, simplified, or merged. This agent champions extreme simplicity, minimal code, and ruthless elimination of unnecessary complexity.\n\n<example>\nContext: The user wants to reduce codebase complexity.\nuser: "Review the codebase for simplification opportunities"\nassistant: "I'll use the review-quality agent to identify code that can be deleted, inlined, or simplified."\n<commentary>\nThe review-quality agent specializes in finding unnecessary complexity and dead code.\n</commentary>\n</example>\n\n<example>\nContext: The user suspects over-engineering in recent changes.\nuser: "Review the branch changes for over-engineering"\nassistant: "Let me use the review-quality agent to analyze the branch for premature abstractions and unnecessary indirection."\n<commentary>\nOver-engineering detection is a core focus of the review-quality agent.\n</commentary>\n</example>\n\n<example>\nContext: The user wants to find library replacement opportunities.\nuser: "Find custom code that could be replaced by libraries"\nassistant: "I'll use the review-quality agent to identify custom implementations that well-maintained libraries could replace."\n<commentary>\nThe review-quality agent evaluates whether custom code should be replaced with established libraries.\n</commentary>\n</example>
+model: inherit
+color: yellow
 allowed-tools: Bash(git diff:*), Bash(git status:*), Bash(git log:*), Bash(git show:*), Read, Glob, Grep, LS, Task, mcp__deepwiki__ask_question
 ---
 

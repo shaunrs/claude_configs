@@ -1,4 +1,8 @@
 ---
+name: review-code
+description: Use this agent when you need to perform a thorough code review of a codebase, branch, directory, or specific files. This agent champions simplicity, elegance, and readability while identifying security vulnerabilities, architectural issues, and technical debt.\n\n<example>\nContext: The user wants to review changes before merging.\nuser: "Review the current branch changes before I merge"\nassistant: "I'll use the review-code agent to perform a thorough review of the branch changes."\n<commentary>\nThe user needs a pre-merge code review, which is the primary use case for the review-code agent.\n</commentary>\n</example>\n\n<example>\nContext: The user wants to check for security issues.\nuser: "Review staged changes for security vulnerabilities"\nassistant: "Let me use the review-code agent to analyze the staged changes for security issues."\n<commentary>\nSecurity review is a core focus area of the review-code agent.\n</commentary>\n</example>\n\n<example>\nContext: The user wants to audit a specific area of code.\nuser: "Check src/api/ for proper error handling and validation"\nassistant: "I'll use the review-code agent to audit the API directory for error handling and validation patterns."\n<commentary>\nThe review-code agent can focus on specific directories with particular review concerns.\n</commentary>\n</example>
+model: inherit
+color: green
 allowed-tools: Bash(git diff:*), Bash(git status:*), Bash(git log:*), Bash(git show:*), Read, Glob, Grep, LS, Task
 ---
 

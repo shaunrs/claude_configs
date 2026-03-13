@@ -2,6 +2,10 @@
 
 Consolidate and streamline the project's CLAUDE.md file to be clear, concise, and scannable while preserving the intent of all rules.
 
+## Why This Matters
+
+CLAUDE.md files are loaded into the context window at the start of every session, consuming tokens alongside the conversation. Because they're context rather than enforced configuration, how you write instructions affects how reliably Claude follows them. Specific, concise, well-structured instructions work best. Longer files consume more context and reduce adherence.
+
 ## Process
 
 ### 1. Read and Analyze
@@ -11,6 +15,8 @@ Read the entire CLAUDE.md file. Identify:
 - Verbose explanations that can be condensed
 - Related rules scattered across different sections
 - Code examples that are redundant or overly detailed
+- Vague instructions that should be made specific
+- Contradicting rules that may cause arbitrary behavior
 
 ### 2. Define Categories
 
@@ -31,7 +37,9 @@ Adapt categories to the specific project. Combine small sections; split large on
 
 ### 3. Apply Consolidation Rules
 
-**Hierarchical bullet points with natural language:** Use bullet points as the primary formatting mechanism, with **inline bold** for key terms. Preserve complete sentences and explanatory context—don't reduce to telegraphic fragments.
+**Target: under 200 lines.** If the streamlined file exceeds this, consider whether some rules belong in `.claude/rules/` files or nested CLAUDE.md files in subdirectories.
+
+**Hierarchical bullet points with natural language:** Use bullet points as the primary formatting mechanism, with **inline bold** for key terms. Preserve complete sentences and explanatory context - don't reduce to telegraphic fragments.
 
 ```markdown
 <!-- BEFORE: Verbose prose paragraphs -->
@@ -54,6 +62,20 @@ or commented-out code "for later".
 - **Prefer explicit dependencies over hidden ones** - Pass dependencies as parameters rather than reaching for globals or hardcoding instantiation. This enables easier testing and loose coupling.
   - Use DI frameworks when the codebase/framework convention calls for it (Angular, NestJS, Spring), but don't introduce DI containers just for their own sake.
   - In functional or simpler codebases, plain parameter passing achieves the same benefits without the overhead.
+```
+
+**Specificity over vagueness:** Write instructions that are concrete enough to verify. If a rule can't be objectively checked, it's too vague.
+
+```markdown
+<!-- BAD: Vague, unverifiable -->
+- Format code properly
+- Test your changes
+- Keep files organized
+
+<!-- GOOD: Concrete, verifiable -->
+- Use 2-space indentation
+- Run `pnpm test` before committing
+- API handlers live in `src/api/handlers/`
 ```
 
 **Minimal code examples:** Keep only examples that demonstrate complex or non-obvious patterns. Remove examples for simple rules.
@@ -132,7 +154,16 @@ For each rule in the original:
 
 **Never lose a rule.** If a rule exists, there was a reason. Restructure and clarify it, don't reduce it to fragments.
 
-### 5. Structure the Output
+### 5. Check for Contradictions
+
+Review all rules to ensure consistency. If two rules contradict each other, Claude may pick one arbitrarily. Common sources of contradiction:
+- Rules inherited from templates that don't match project conventions
+- Outdated rules that haven't been updated after refactoring
+- Rules from different team members with different preferences
+
+When contradictions are found, flag them for user resolution rather than arbitrarily picking one.
+
+### 6. Structure the Output
 
 ```markdown
 # Project Name
@@ -165,14 +196,19 @@ One-liner list or compact format
 
 **NO horizontal rules (`---`)** - They are not used in Claude Code system prompts. Section headers provide sufficient visual separation.
 
-### 6. Validate
+### 7. Validate
 
 After streamlining:
 1. Compare section-by-section with original to ensure no rules were lost
 2. Verify all critical warnings (security, breaking changes) are preserved
 3. Check that code examples still compile/make sense in isolation
-4. Confirm the reduction is at least 40-60% in line count
+4. Confirm the result is under 200 lines (hard target) or flag sections to extract to `.claude/rules/`
+5. Verify no contradicting rules remain
 
 ## Output
 
-Write the streamlined version to `CLAUDE.streamlined.md` in the same directory. Report the line count reduction. Ask the user if they want to replace the original.
+Edit the CLAUDE.md file directly (it should be under version control). Report:
+- Line count: original → streamlined
+- Whether the 200-line target was met
+- Any contradictions found that need user resolution
+- Suggestions for rules to extract to `.claude/rules/` if over target

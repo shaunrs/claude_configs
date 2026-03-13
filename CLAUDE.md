@@ -49,6 +49,14 @@ README files must be simple, concise and scannable:
 ### Linting and Type Checking
 - After making any code change, you must run the linter and any typecheckers to validate the code
 - Always run `pnpm lint --fix` first, as it reduces the time to a successful linting pass
+- **Linting must complete in <30 seconds.** This is a hard requirement. When linting exceeds this threshold, investigate the root cause rather than accepting the degradation.
+
+### CI/CD Design Principles
+- **Investigate performance degradation** - When CI slows down, find the root cause. Don't accept "it just takes longer now" as an answer.
+- **No dev-only workarounds that mask production issues** - When CI needs differ from local development (e.g., generated types required for linting), prefer standard solutions:
+  - **Use build artifacts** - Build expensive outputs once, share via artifacts to downstream jobs
+  - **Never commit stubs or mocks to source** - A stub for generated code could mask a missing build step locally, causing runtime failures in production
+- **Guiding question:** "If someone forgets a build step, will the system catch it?" The answer must be yes.
 
 ### Summarizing Changes
 - After completing a phase of work, list all of the filenames that had changes applied
