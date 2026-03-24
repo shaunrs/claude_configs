@@ -10,8 +10,14 @@
 
 ## Test Quality
 
+- **One behavior per test** - Each test verifies one logical behavior. Multiple assertions verifying different facets of the same behavior are fine (status code AND body AND headers from one HTTP call). Split into separate tests when assertions test independent behaviors or require different setup.
+- **Arrange-Act-Assert structure** - Separate setup, execution, and verification with blank lines. One Act (execution) per test. If your Act is multiple lines, you're testing a workflow, not a unit.
+- **Test names as documentation** - When a test fails, the name alone should explain what broke without reading the body. Use `describe` for the unit, `context` (or nested `describe`) for the scenario, `it` for the expected behavior. Full concatenation should read as a sentence.
 - **Avoid fragile selectors** - Don't couple tests to UI text, element order, or implementation details that change frequently. Use stable identifiers (data-testid, roles) over CSS classes or exact string matches.
 - **DRY applies to tests** - Avoid code duplication in tests just as in production code. Extract shared setup, assertions, and utilities into helpers.
+- **Factories over fixtures for domain objects** - Use factories (Fishery, FactoryBot, factory_boy) for objects with many valid states. Factories show exactly which attributes matter per test. Reserve fixtures for stable reference data (countries, roles, permissions) that rarely changes.
+  - **Minimal defaults** - factories produce the simplest valid object. Use traits or overrides for variations.
+  - **Use `build` over `create`** - in-memory objects over persisted ones when persistence isn't the behavior under test. This is a primary cause of slow tests.
 
 ## Mocking Strategy
 
@@ -21,6 +27,7 @@
 - **Don't mock internal collaborators** - Code you own and control should generally use real implementations in tests. Mocking your own classes couples tests to implementation details and breaks during refactoring.
 - **State verification over behavior verification** - Prefer asserting on the result or final state rather than verifying specific method calls were made. Behavior verification creates brittle tests coupled to implementation.
 - **Keep mocks simple** - If mock setup is painful, treat it as design feedback. Complex mocking often indicates the code under test has too many responsibilities or unclear boundaries.
+- **Clean up mocks in `afterEach`** - Use `vi.restoreAllMocks()` (Vitest), `jest.restoreAllMocks()` (Jest), or equivalent. Without cleanup, mock state leaks between tests causing flaky failures. Always restore fake timers (`vi.useRealTimers()`) in teardown.
 
 ## Test-Driven Development
 
@@ -34,6 +41,7 @@
 - **Local tests must complete in <60 seconds** - Tests should be reasonable to run on commit/push hooks without significantly slowing down developers or AI agents. When tests exceed this threshold, investigate the root cause.
 - **Linting must complete in <30 seconds** - Linting runs on every save and commit. It must stay fast enough that it never becomes something to avoid. When linting exceeds this threshold, investigate the root cause rather than accepting degradation.
 - **Investigate slowdowns** - When tests or CI slow down, find the root cause. Don't accept "it just takes longer now."
+- **Common speed killers** - Network I/O (even to localhost), database operations per test (use transactions + rollback), file system I/O (use in-memory alternatives), process spawning, sleep/wait statements, heavy factory chains that implicitly create many associated objects. Profile regularly to catch regressions.
 
 ## CI/CD Principles
 
